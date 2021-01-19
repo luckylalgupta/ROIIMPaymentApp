@@ -2,6 +2,9 @@ package com.payment.app.service;
 
 import com.payment.app.dto.CustomerDto;
 import com.payment.app.dto.PaymentDTO;
+import com.payment.app.helper.ResponseCustomer;
+import com.payment.app.helper.ResponseToken;
+import com.payment.app.helper.Token;
 import com.payment.app.helper.User;
 import com.payment.app.model.Customer;
 import com.payment.app.repository.CustomerRepository;
@@ -45,6 +48,18 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setEmail(customerDto.getEmail());
         customer.setCustomerId(responseCustomerJSON.getId());
         customerRepository.save(customer);
+    }
+    private String createSingleUseToken(Customer customer){
+        String Url = "https://api.test.paysafe.com/paymenthub/v1/customers/"+customer.getCustomerId()+"/singleusecustomertokens";
+        Token tokenJSON = new Token();
+
+        tokenJSON.setMerchantRefNum(""+UUID.randomUUID());
+
+        HttpEntity<Token> entity = new HttpEntity<Token>(tokenJSON,header);
+        ResponseToken responseTokenJSON = (ResponseToken) restTemplate.postForObject(
+                Url,  entity, ResponseToken.class);
+
+        return responseTokenJSON.getSingleUseCustomerToken();
     }
     @Override
     public String completePayment(PaymentDTO paymentDTO) {
