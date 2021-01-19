@@ -1,6 +1,6 @@
 package com.payment.app.dto;
 
-public class PaymentDTO {
+public class PaymentDto {
     private Long amount;
     private String email;
     private String paymentHandleToken;
